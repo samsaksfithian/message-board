@@ -1,7 +1,7 @@
 @import "Comment.css";
 
 message-board-comments {
-  display: flex;
-  flex-direction: column;
-  background-color: #eff1f3;
+	display: flex;
+	flex-direction: column;
+	background-color: #eff1f3;
 }
