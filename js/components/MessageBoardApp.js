@@ -16,6 +16,7 @@ class MessageBoardApp extends HTMLElement {
 		this.state = {
 			comments: this.api.getCommentsSortedByTime(),
 		};
+		this.addEventListener('removeComment', this.handleRemoveComment);
 	}
 	
 	// =============================================================
@@ -71,7 +72,6 @@ class MessageBoardApp extends HTMLElement {
 		// add event listeners
 		this.querySelector('nav form').addEventListener('submit', this.handleSearchSubmit);
 		this.querySelector('.add-comment form').addEventListener('submit', this.handleAddComment);
-		this.querySelector('message-board-comment-list').addEventListener('removeComment', this.handleRemoveComment);
 	}
 	
 	// =============================================================
@@ -92,13 +92,19 @@ class MessageBoardApp extends HTMLElement {
 		event.target.reset();
 		const updatedComments = this.api.addComment(newCommentText);
 		this.setState( { comments: updatedComments } );
-		// console.log(newCommentText, this.state.comments);
+		console.log(`Comments after add:`, updatedComments);
 	};
 	
 	// =============================================================
 	
 	handleRemoveComment = event => {
 		event.preventDefault();
+		const confirmed = window.confirm(`Really delete "${event.detail}"?`);
+		if (confirmed) {
+			const updatedComments = this.api.removeComment(event.target.comment.id);
+			this.setState( { comments: updatedComments } );
+			console.log(`Comments after remove:`, updatedComments);
+		}
 	};
 }
 

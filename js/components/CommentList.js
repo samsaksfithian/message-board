@@ -30,24 +30,23 @@ export default class CommentList extends HTMLElement {
 
 	// =============================================================	
 
-	attributeChangedCallback(attrName, oldVal, newVal) {
-		// attrName, oldVal, and newVal not super necessary right now, but good to get in the habit/know how it works
-		console.log(attrName, oldVal, newVal);
+	attributeChangedCallback() {
+		// often/normally, args will be: (attrName, oldVal, newVal)
+		// not super necessary right now, but good to get in the habit/know how it works
 		this.render();
 	}
 
 	// =============================================================
 
 	render() {
-		this.innerHTML = `${this.comments.map(comment => `<p>${comment.text}</p>`).join('')}`;
-		// ^should be <message-board-comment-item></message-board-comment-item>, not generic <p>
-
-		// this.innerHTML = `
-		// 	<message-board-comment-item></message-board-comment-item>
-		// 	<message-board-comment-item></message-board-comment-item>
-		// 	<message-board-comment-item></message-board-comment-item>
-		// 	<message-board-comment-item></message-board-comment-item>
-		// `;
+		this.innerHTML = '';
+		this.comments.forEach(comment => {
+			// create a comment-list element
+			const newComment = document.createElement('message-board-comment-item');
+			// set its comment attribute
+			newComment.comment = comment;
+			this.appendChild(newComment);
+		});
 	}
 }
 
