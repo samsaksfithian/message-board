@@ -1,20 +1,19 @@
-//=============================================================
-//=============================================================
+// =============================================================
+// =============================================================
 // Main code to set everything up
 
 // Imports
-import MessageBoard from './components/MessageBoard.js';
-import Comments from './components/Comments.js';
-import Comment from './components/Comment.js';
+import MessageBoardApp from './components/MessageBoardApp.js';
+import CommentList from './components/CommentList.js';
+import CommentItem from './components/CommentItem.js';
 
-//=============================================================
+// =============================================================
 
 // Custom Element definitions
-customElements.define('message-board', MessageBoard);
-customElements.define('message-board-comments', Comments);
-customElements.define('message-board-comment', Comment);
+customElements.define('message-board-app', MessageBoardApp);
+customElements.define('message-board-comment-list', CommentList);
+customElements.define('message-board-comment-item', CommentItem);
 
-//=============================================================
-//=============================================================
-
+// =============================================================
+// =============================================================
 
