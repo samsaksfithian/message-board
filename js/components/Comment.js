@@ -1,7 +1,12 @@
+//=============================================================
+//=============================================================
+
 export default class Comment extends HTMLElement {
 	connectedCallback() {
 		this.render();
 	}
+
+	//=============================================================
 
 	render() {
 		this.innerHTML = `
@@ -12,3 +17,7 @@ export default class Comment extends HTMLElement {
 		this.querySelector('button.delete-button').addEventListener('click', () => console.log('deleting comment...'));
 	}
 }
+
+//=============================================================
+//=============================================================
+

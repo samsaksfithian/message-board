@@ -1,7 +1,12 @@
+//=============================================================
+//=============================================================
+
 class MessageBoardAPI {
 	constructor(comments = []) {
 		this.comments = comments;
 	}
+
+	//=============================================================
 
 	/**
 	 * Adds a new comment to the comments array
@@ -19,6 +24,8 @@ class MessageBoardAPI {
 		return this.comments;
 	}
 
+	//=============================================================
+
 	/**
 	 * Updates comment text
 	 * @param {number} id Unique Id for comment
@@ -30,6 +37,8 @@ class MessageBoardAPI {
 		return this.comments;
 	}
 
+	//=============================================================
+
 	/**
 	 * Removes comment from the list
 	 * @param {number} id Unique Id for comment to be removed
@@ -40,6 +49,8 @@ class MessageBoardAPI {
 		this.comments.splice(index, 1);
 		return this.comments;
 	}
+
+	//=============================================================
 
 	/**
 	 * Lists comments sorted by timestamp in desc or asc order
@@ -56,17 +67,25 @@ class MessageBoardAPI {
 		});
 	}
 
+	//=============================================================
+
 	/**
 	 * Filters comments by a substring contained in the text
 	 * @param {string} substring Substring to be filtered
 	 * @returns {array} Filtered array of comment objects
 	 */
-	filterCommentsByText(substring) {
+	filterCommentsByText(substring = '') {
 		return this.comments.filter(comment => comment.text.toLowerCase().includes(substring.toLowerCase()));
 	}
 }
 
+//=============================================================
+//=============================================================
+
 export default MessageBoardAPI;
+
+//=============================================================
+//=============================================================
 
 // Use this comment data for testing
 export const commentData = [
@@ -96,3 +115,7 @@ export const commentData = [
 		timestamp: 1546903165,
 	},
 ];
+
+//=============================================================
+//=============================================================
+

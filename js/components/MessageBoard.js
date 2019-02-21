@@ -1,7 +1,45 @@
+//=============================================================
+//=============================================================
+
+// Imports
+import MessageBoardAPI, { commentData } from "../MessageBoardAPI.js";
+
+//=============================================================
+//=============================================================
+
 class MessageBoardApp extends HTMLElement {
+	//=============================================================
+
+	constructor() {
+		super();
+		this.api = new MessageBoardAPI(commentData);
+		this.state = {
+			comments: this.api.getCommentsSortedByTime()
+		}
+	}
+
+	//=============================================================
+
+	// want to be able to pass in only the things we've changed
+	// e.g. setState( { comments: updatedComments } )
+	setState(newState){
+		Object.keys(newState).forEach(key => {
+			// e.g. this.state.comments = updatedComments
+			this.state[key] = newState[key];
+			
+			this.querySelectorAll(`[${key}]`).forEach(element => { 
+				element[key] = newState[key];
+			});
+		});
+	}
+
+	//=============================================================
+
 	connectedCallback() {
 		this.render();
 	}
+
+	//=============================================================
 
 	render() {
 		this.innerHTML = /* html */ `
@@ -16,17 +54,19 @@ class MessageBoardApp extends HTMLElement {
 				</form>
 			</nav>
 			<message-board-comments></message-board-comments>
-				<div class="add-comment">
-					<form>
-						<input
-							type="text"
-							name="comment"
-							placeholder="Your opinion here"
-						/>
-						<button type="submit">Comment</button>
-					</form>
-				</div>
+			<div class="add-comment">
+				<form>
+					<input
+						type="text"
+						name="comment"
+						placeholder="Your opinion here"
+					/>
+					<button type="submit">Comment</button>
+				</form>
+			</div>
 		`;
+
+		this.querySelector('message-board-comments').setAttribute('comments', JSON.stringify(this.state.comments));
 
 		// add event listeners
 		this.querySelector('nav form').addEventListener('submit', this.handleSearchSubmit);
@@ -34,11 +74,37 @@ class MessageBoardApp extends HTMLElement {
 		this.querySelector('message-board-comments').addEventListener('removeComment', this.handleRemoveComment);
 	}
 
-	handleSearchSubmit = event => {};
+	//=============================================================
 
-	handleAddComment = event => {};
+	handleSearchSubmit = event => {
+		event.preventDefault();
+		const searchText = new FormData(event.target).get('search');
+		const updatedComments = this.api.filterCommentsByText(searchText);
+		this.setState( {comments: updatedComments} );
+		// console.log(searchText, this.state.comments);
+	};
+
+	//=============================================================
+
+	handleAddComment = event => {
+		event.preventDefault();
+		const newCommentText = new FormData(event.target).get('comment');
+		event.target.reset();
+		const updatedComments = this.api.addComment(newCommentText);
+		this.setState( {comments: updatedComments} );
+		// console.log(newCommentText, this.state.comments);
+	};
+
+	//=============================================================
 
 	handleRemoveComment = event => {};
+
 }
 
+//=============================================================
+//=============================================================
+
 export default MessageBoardApp;
+
+//=============================================================
+//=============================================================
