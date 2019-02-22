@@ -33,13 +33,29 @@ export default class CommentItem extends HTMLElement {
 	render() {
 		this.innerHTML = `
 			<p>${this.comment.text}</p>
+			<button type="button" class="edit-button">Edit</button>
 			<button type="button" class="delete-button">x</button>
 		`;
 
-		this.querySelector('button.delete-button').addEventListener('click', this.dispachRemoveEvent);
+		this.querySelector('button.delete-button').addEventListener('click', this.dispatchRemoveEvent);
+		this.querySelector('button.edit-button').addEventListener('click', this.dispatchEditEvent);
+		
+		// console.log("Rendered Comment", this.comment);
 	}
 
-	dispachRemoveEvent = () => {
+	// =============================================================
+
+	dispatchEditEvent = () => {
+		const editEvent = new CustomEvent('editComment', { // second argument is an options object
+			bubbles: true,
+			detail: this.comment.text,
+		});
+		this.dispatchEvent(editEvent);
+	};
+
+	// =============================================================
+
+	dispatchRemoveEvent = () => {
 		const removeEvent = new CustomEvent('removeComment', { // second argument is an options object
 			bubbles: true,
 			detail: this.comment.text,

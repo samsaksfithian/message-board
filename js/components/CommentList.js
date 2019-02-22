@@ -45,8 +45,11 @@ export default class CommentList extends HTMLElement {
 			const newComment = document.createElement('message-board-comment-item');
 			// set its comment attribute
 			newComment.comment = comment;
+			// console.log(new Date(comment.timestamp));
 			this.appendChild(newComment);
 		});
+		// console.log("Rendered List", this.comments);
+
 	}
 }
 

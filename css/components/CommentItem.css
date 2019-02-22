@@ -12,16 +12,26 @@ message-board-comment-item:hover {
 }
 
 message-board-comment-item .delete-button {
+	transform: translate(-50%, 50%);
+}
+
+message-board-comment-item .edit-button {
+	transform: translate(-100%, 50%);
+}
+
+message-board-comment-item .delete-button, 
+message-board-comment-item .edit-button {
 	position: absolute;
 	right: 0;
 	top: 0;
-	transform: translate(-50%, 50%);
 	font-size: 0.75rem;
 	cursor: pointer;
 	opacity: 0;
 	transition: opacity 350ms;
 }
 
-message-board-comment-item:hover .delete-button {
+message-board-comment-item:hover .delete-button,
+message-board-comment-item:hover .edit-button
+ {
 	opacity: 1;
 }

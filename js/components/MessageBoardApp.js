@@ -17,6 +17,7 @@ class MessageBoardApp extends HTMLElement {
 			comments: this.api.getCommentsSortedByTime(),
 		};
 		this.addEventListener('removeComment', this.handleRemoveComment);
+		this.addEventListener('editComment', this.handleEditComment);
 	}
 	
 	// =============================================================
@@ -41,10 +42,18 @@ class MessageBoardApp extends HTMLElement {
 	}
 	
 	// =============================================================
-	
 	render() {
 		this.innerHTML = /* html */ `
 			<nav>
+				<div id="selectSort">
+					<select name="sortBy">
+						<option value="" selected disabled hidden>Sort By</option>
+						<option value="Oldest First">Oldest First</option>
+						<option value="Newest First">Newest First</option>
+						<option value="Alpha A to Z">Alpha A to Z</option>
+						<option value="Alpha Z to A">Alpha Z to A</option>
+					</select>
+				</div>
 				<form>
 					<input
 						type="text"
@@ -72,7 +81,28 @@ class MessageBoardApp extends HTMLElement {
 		// add event listeners
 		this.querySelector('nav form').addEventListener('submit', this.handleSearchSubmit);
 		this.querySelector('.add-comment form').addEventListener('submit', this.handleAddComment);
+		this.querySelector('#selectSort').addEventListener('input', this.handleSortSubmit);
+
+		// console.log("Rendered App", this.state.comments);
 	}
+
+	// =============================================================
+
+	handleSortSubmit = event => {
+		event.preventDefault();
+		const sortType = event.target.value;
+		let updatedComments = this.state.comments;
+		if (sortType === 'Oldest First') {
+			updatedComments = this.api.getCommentsSortedByTime(true);
+		} else if (sortType === 'Newest First') {
+			updatedComments = this.api.getCommentsSortedByTime(false);
+		} else if (sortType === 'Alpha A to Z') {
+			updatedComments = this.api.getCommentsSortedByAlpha(true);
+		} else if (sortType === 'Alpha Z to A') {
+			updatedComments = this.api.getCommentsSortedByAlpha(false);
+		}
+		this.setState( { comments: updatedComments } );
+	};
 	
 	// =============================================================
 	
@@ -92,9 +122,20 @@ class MessageBoardApp extends HTMLElement {
 		event.target.reset();
 		const updatedComments = this.api.addComment(newCommentText);
 		this.setState( { comments: updatedComments } );
-		console.log(`Comments after add:`, updatedComments);
+		// console.log(`Comments after add:`, updatedComments);
 	};
 	
+	// =============================================================
+	
+	handleEditComment = event => {
+		event.preventDefault();
+		const newComment = window.prompt('Enter new comment text:', `${event.detail}`);
+		if (newComment) {
+			const updatedComments = this.api.updateComment(event.target.comment.id, newComment);
+			this.setState( { comments: updatedComments } );
+		}
+	};
+
 	// =============================================================
 	
 	handleRemoveComment = event => {
@@ -103,9 +144,11 @@ class MessageBoardApp extends HTMLElement {
 		if (confirmed) {
 			const updatedComments = this.api.removeComment(event.target.comment.id);
 			this.setState( { comments: updatedComments } );
-			console.log(`Comments after remove:`, updatedComments);
+			// console.log(`Comments after remove:`, updatedComments);
 		}
 	};
+
+	// =============================================================
 }
 
 // =============================================================

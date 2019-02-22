@@ -70,6 +70,23 @@ class MessageBoardAPI {
 	// =============================================================
 
 	/**
+	 * Lists comments sorted by comment text in desc or asc order
+	 * @param {boolean} orderAsc If true sorts A to Z, else sorts Z to A
+	 *  @returns {array} Sorted array of comment objects
+	 */
+	getCommentsSortedByAlpha(orderAsc = true) {
+		const clonedComments = JSON.parse(JSON.stringify(this.comments));
+		return clonedComments.sort((lhs, rhs) => {
+			if (orderAsc) {
+				return lhs.text < rhs.text ? -1 : 1;
+			}
+			return lhs.text < rhs.text ? 1 : -1;
+		});
+	}
+
+	// =============================================================
+
+	/**
 	 * Filters comments by a substring contained in the text
 	 * @param {string} substring Substring to be filtered
 	 * @returns {array} Filtered array of comment objects
@@ -91,12 +108,12 @@ export default MessageBoardAPI;
 export const commentData = [
 	{
 		text: 'Love this!',
-		id: 1,
+		id: 5,
 		timestamp: 1549581565,
 	},
 	{
 		text: 'Super good',
-		id: 2,
+		id: 4,
 		timestamp: 1549577965,
 	},
 	{
@@ -106,12 +123,12 @@ export const commentData = [
 	},
 	{
 		text: 'Ramen is my fav food ever',
-		id: 4,
+		id: 2,
 		timestamp: 1548976765,
 	},
 	{
 		text: 'Nice Nice Nice!',
-		id: 5,
+		id: 1,
 		timestamp: 1546903165,
 	},
 ];

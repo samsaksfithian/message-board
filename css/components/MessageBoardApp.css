@@ -38,3 +38,12 @@ message-board-app .add-comment input::placeholder {
 	color: hsl(217, 20%, 10%);
 	opacity: 0.85;
 }
+
+message-board-app #selectSort {
+	background-color: peachpuff;
+	display: flex;
+	justify-content: center;
+	margin: 0px 20px;
+}
+
+
