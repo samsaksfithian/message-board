@@ -46,4 +46,7 @@ message-board-app #selectSort {
 	margin: 0px 20px;
 }
 
+message-board-app button:hover {
+	opacity: 0.85;
+}
 

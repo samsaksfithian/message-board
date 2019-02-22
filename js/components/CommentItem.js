@@ -31,8 +31,13 @@ export default class CommentItem extends HTMLElement {
 	// =============================================================
 
 	render() {
+		const formattedTS = new Date(this.comment.timestamp);
+		const ampm = formattedTS.getHours() - 12 > 0 ? "pm" : "am";
+		const displayTime = `${formattedTS.getHours() % 12}:${formattedTS.getMinutes()}${ampm}`;
+		const displayDate = `${formattedTS.getMonth() + 1}/${formattedTS.getDate()}/${formattedTS.getFullYear()}`;
 		this.innerHTML = `
 			<p>${this.comment.text}</p>
+			<p class="timestamp-text">Posted at ${displayTime} on ${displayDate}</p>
 			<button type="button" class="edit-button">Edit</button>
 			<button type="button" class="delete-button">x</button>
 		`;

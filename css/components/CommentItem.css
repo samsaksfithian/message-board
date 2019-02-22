@@ -7,6 +7,12 @@ message-board-comment-item {
 	transition: background-color 150ms;
 }
 
+message-board-comment-item .timestamp-text {
+	font-size: 70%;
+	color: rgba(170, 170, 170, 1);
+	/* padding: 0px 10px; */
+}
+
 message-board-comment-item:hover {
 	background-color: rgba(0, 0, 0, 0.1);
 }

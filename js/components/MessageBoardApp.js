@@ -61,6 +61,7 @@ class MessageBoardApp extends HTMLElement {
 						placeholder="Search"
 					/>
 					<button type="submit">Search</button>
+					<button type="button" id="clear-button">Clear</button>
 				</form>
 			</nav>
 			<message-board-comment-list></message-board-comment-list>
@@ -80,6 +81,7 @@ class MessageBoardApp extends HTMLElement {
 		
 		// add event listeners
 		this.querySelector('nav form').addEventListener('submit', this.handleSearchSubmit);
+		this.querySelector('#clear-button').addEventListener('click', this.handleClearSearch);
 		this.querySelector('.add-comment form').addEventListener('submit', this.handleAddComment);
 		this.querySelector('#selectSort').addEventListener('input', this.handleSortSubmit);
 
@@ -113,11 +115,21 @@ class MessageBoardApp extends HTMLElement {
 		this.setState( { comments: updatedComments } );
 		// console.log(searchText, this.state.comments);
 	};
+
+	// =============================================================
+	
+	handleClearSearch = event => {
+		event.preventDefault();
+		event.target.form.reset();
+		const updatedComments = this.api.filterCommentsByText();
+		this.setState( { comments: updatedComments } );
+	};
 	
 	// =============================================================
 	
 	handleAddComment = event => {
 		event.preventDefault();
+		console.log(event.target);
 		const newCommentText = new FormData(event.target).get('comment');
 		event.target.reset();
 		const updatedComments = this.api.addComment(newCommentText);
