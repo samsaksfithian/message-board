@@ -18,11 +18,11 @@ message-board-comment-item:hover {
 }
 
 message-board-comment-item .delete-button {
-	transform: translate(-50%, 50%);
+	transform: translate(-50%, 75%);
 }
 
 message-board-comment-item .edit-button {
-	transform: translate(-100%, 50%);
+	transform: translate(-100%, 75%);
 }
 
 message-board-comment-item .delete-button, 
@@ -34,6 +34,7 @@ message-board-comment-item .edit-button {
 	cursor: pointer;
 	opacity: 0;
 	transition: opacity 350ms;
+	/* transform: translateY(75%); */
 }
 
 message-board-comment-item:hover .delete-button,

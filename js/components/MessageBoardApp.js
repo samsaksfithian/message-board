@@ -15,6 +15,8 @@ class MessageBoardApp extends HTMLElement {
 		this.api = new MessageBoardAPI(commentData);
 		this.state = {
 			comments: this.api.getCommentsSortedByTime(),
+			search: "",
+			sortBy: "oldest",
 		};
 		this.addEventListener('removeComment', this.handleRemoveComment);
 		this.addEventListener('editComment', this.handleEditComment);
