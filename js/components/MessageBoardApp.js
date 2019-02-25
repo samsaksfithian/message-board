@@ -36,6 +36,13 @@ class MessageBoardApp extends HTMLElement {
 		});
 		this.toggleLoading();
 	}
+
+	// =============================================================
+	
+	toggleLoading() {
+		// TODO: make this a component that has attributes based on state
+		this.loader.style.display = this.state.loading ? "block" : "none";
+	}
 	
 	// =============================================================
 	
@@ -46,12 +53,6 @@ class MessageBoardApp extends HTMLElement {
 			this.setState( { comments, loading: false } );
 		});
 		this.render();
-	}
-	
-	// =============================================================
-	
-	toggleLoading() {
-		this.loader.style.display = this.state.loading ? "block" : "none";
 	}
 	
 	// =============================================================
@@ -106,9 +107,15 @@ class MessageBoardApp extends HTMLElement {
 
 	// =============================================================
 
-	handleSortSubmit = async event => {
+	interactionSetup(event) {
 		event.preventDefault();
 		this.setState( { loading: true } );
+	}
+
+	// =============================================================
+
+	handleSortSubmit = async event => {
+		this.interactionSetup(event);
 		const sortType = event.target.value;
 		// eslint-disable-next-line react/no-access-state-in-setstate
 		let updatedComments = this.state.comments;
@@ -127,8 +134,7 @@ class MessageBoardApp extends HTMLElement {
 	// =============================================================
 	
 	handleSearchSubmit = async event => {
-		event.preventDefault();
-		this.setState( { loading: true } );
+		this.interactionSetup(event);
 		const searchText = new FormData(event.target).get('search');
 		const updatedComments = await this.api.filterCommentsByText(searchText);
 		this.setState( { comments: updatedComments, loading: false } );
@@ -138,8 +144,7 @@ class MessageBoardApp extends HTMLElement {
 	// =============================================================
 	
 	handleClearSearch = async event => {
-		event.preventDefault();
-		this.setState( { loading: true } );
+		this.interactionSetup(event);
 		event.target.form.reset();
 		const updatedComments = await this.api.filterCommentsByText();
 		this.setState( { comments: updatedComments, loading: false } );
@@ -148,8 +153,7 @@ class MessageBoardApp extends HTMLElement {
 	// =============================================================
 	
 	handleAddComment = async event => {
-		event.preventDefault();
-		this.setState( { loading: true } );
+		this.interactionSetup(event);
 		const newCommentText = new FormData(event.target).get('comment');
 		event.target.reset();
 		const updatedComments = await this.api.addComment(newCommentText);
@@ -160,25 +164,29 @@ class MessageBoardApp extends HTMLElement {
 	// =============================================================
 	
 	handleEditComment = async event => {
-		event.preventDefault();
-		this.setState( { loading: true } );
+		this.interactionSetup(event);
+		// eslint-disable-next-line no-alert
 		const newComment = window.prompt('Enter new comment text:', `${event.detail}`);
 		if (newComment) {
 			const updatedComments = await this.api.updateComment(event.target.comment.id, newComment);
 			this.setState( { comments: updatedComments, loading: false } );
+		} else {
+			this.setState( { loading: false } );
 		}
 	};
 
 	// =============================================================
 	
 	handleRemoveComment = async event => {
-		event.preventDefault();
-		this.setState( { loading: true } );
+		this.interactionSetup(event);
+		// eslint-disable-next-line no-alert
 		const confirmed = window.confirm(`Really delete "${event.detail}"?`);
 		if (confirmed) {
 			const updatedComments = await this.api.removeComment(event.target.comment.id);
 			this.setState( { comments: updatedComments, loading: false } );
 			// console.log(`Comments after remove:`, updatedComments);
+		} else {
+			this.setState( { loading: false } );
 		}
 	};
 
