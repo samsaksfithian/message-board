@@ -2,63 +2,63 @@
 // =============================================================
 
 // Imports
-import MessageBoardAPI, { commentData } from "../MessageBoardAPI.js";
+import MessageBoardAPI, { commentData } from '../MessageBoardAPI.js';
 
 // =============================================================
 // =============================================================
 
 class MessageBoardApp extends HTMLElement {
-	// =============================================================
-	
-	constructor() {
-		super();
-		this.api = new MessageBoardAPI(commentData);
-		this.addEventListener('removeComment', this.handleRemoveComment);
-		this.addEventListener('editComment', this.handleEditComment);
-		this.state = {
-			comments: [],
-			loading: true,
-		};
-	}
-	
-	// =============================================================
-	
-	// want to be able to pass in only the things we've changed
-	// e.g. setState( { comments: updatedComments } )
-	setState(newState) {
-		Object.keys(newState).forEach(key => {
-			// e.g. this.state.comments = updatedComments
-			this.state[key] = newState[key];
-			
-			this.querySelectorAll(`[${key}]`).forEach(element => {
-				element[key] = newState[key];
-			});
-		});
-		this.toggleLoading();
-	}
+  // =============================================================
 
-	// =============================================================
-	
-	toggleLoading() {
-		// TODO: make this a component that has attributes based on state
-		this.loader.style.display = this.state.loading ? "block" : "none";
-	}
-	
-	// =============================================================
-	
-	connectedCallback() {
-		// argument of the arrow function is the return of the callback function
-		this.api.getComments().then(comments => {
-			// same as this.setState( { comments: comments } );
-			this.setState( { comments, loading: false } );
-		});
-		this.render();
-	}
-	
-	// =============================================================
-	
-	render() {
-		this.innerHTML = /* html */ `
+  constructor() {
+    super();
+    this.api = new MessageBoardAPI(commentData);
+    this.addEventListener('removeComment', this.handleRemoveComment);
+    this.addEventListener('editComment', this.handleEditComment);
+    this.state = {
+      comments: [],
+      loading: true,
+    };
+  }
+
+  // =============================================================
+
+  // want to be able to pass in only the things we've changed
+  // e.g. setState( { comments: updatedComments } )
+  setState(newState) {
+    Object.keys(newState).forEach(key => {
+      // e.g. this.state.comments = updatedComments
+      this.state[key] = newState[key];
+
+      this.querySelectorAll(`[${key}]`).forEach(element => {
+        element[key] = newState[key];
+      });
+    });
+    this.toggleLoading();
+  }
+
+  // =============================================================
+
+  toggleLoading() {
+    // TODO: make this a component that has attributes based on state
+    this.loader.style.display = this.state.loading ? 'block' : 'none';
+  }
+
+  // =============================================================
+
+  connectedCallback() {
+    // argument of the arrow function is the return of the callback function
+    this.api.getComments().then(comments => {
+      // same as this.setState( { comments: comments } );
+      this.setState({ comments, loading: false });
+    });
+    this.render();
+  }
+
+  // =============================================================
+
+  render() {
+    this.innerHTML = /* html */ `
 		<nav>
 			<div id="selectSort">
 				<select name="sortBy">
@@ -92,105 +92,128 @@ class MessageBoardApp extends HTMLElement {
 			</form>
 		</div>
 		`;
-		
-		this.querySelector('message-board-comment-list').setAttribute('comments', JSON.stringify(this.state.comments));
-		
-		// add event listeners
-		this.querySelector('nav form').addEventListener('submit', this.handleSearchSubmit);
-		this.querySelector('#clear-button').addEventListener('click', this.handleClearSearch);
-		this.querySelector('.add-comment form').addEventListener('submit', this.handleAddComment);
-		this.querySelector('#selectSort').addEventListener('input', this.handleSortSubmit);
-		
-		this.loader = this.querySelector('.loader');
-		// console.log("Rendered App", this.state.comments);
-	}
 
-	// =============================================================
+    this.querySelector('message-board-comment-list').setAttribute(
+      'comments',
+      JSON.stringify(this.state.comments),
+    );
 
-	interactionSetup(event) {
-		event.preventDefault();
-		this.setState( { loading: true } );
-	}
+    // add event listeners
+    this.querySelector('nav form').addEventListener(
+      'submit',
+      this.handleSearchSubmit,
+    );
+    this.querySelector('#clear-button').addEventListener(
+      'click',
+      this.handleClearSearch,
+    );
+    this.querySelector('.add-comment form').addEventListener(
+      'submit',
+      this.handleAddComment,
+    );
+    this.querySelector('#selectSort').addEventListener(
+      'input',
+      this.handleSortSubmit,
+    );
 
-	// =============================================================
+    this.loader = this.querySelector('.loader');
+    // console.log("Rendered App", this.state.comments);
+  }
 
-	handleSortSubmit = async event => {
-		this.interactionSetup(event);
-		const sortType = event.target.value;
-		// eslint-disable-next-line react/no-access-state-in-setstate
-		let updatedComments = this.state.comments;
-		if (sortType === 'Oldest First') {
-			updatedComments = await this.api.getCommentsSortedByTime(true);
-		} else if (sortType === 'Newest First') {
-			updatedComments = await this.api.getCommentsSortedByTime(false);
-		} else if (sortType === 'Alpha A to Z') {
-			updatedComments = await this.api.getCommentsSortedByAlpha(true);
-		} else if (sortType === 'Alpha Z to A') {
-			updatedComments = await this.api.getCommentsSortedByAlpha(false);
-		}
-		this.setState( { comments: updatedComments, loading: false } );
-	};
-	
-	// =============================================================
-	
-	handleSearchSubmit = async event => {
-		this.interactionSetup(event);
-		const searchText = new FormData(event.target).get('search');
-		const updatedComments = await this.api.filterCommentsByText(searchText);
-		this.setState( { comments: updatedComments, loading: false } );
-		// console.log(searchText, this.state.comments);
-	};
+  // =============================================================
 
-	// =============================================================
-	
-	handleClearSearch = async event => {
-		this.interactionSetup(event);
-		event.target.form.reset();
-		const updatedComments = await this.api.filterCommentsByText();
-		this.setState( { comments: updatedComments, loading: false } );
-	};
-	
-	// =============================================================
-	
-	handleAddComment = async event => {
-		this.interactionSetup(event);
-		const newCommentText = new FormData(event.target).get('comment');
-		event.target.reset();
-		const updatedComments = await this.api.addComment(newCommentText);
-		this.setState( { comments: updatedComments, loading: false } );
-		// console.log(`Comments after add:`, updatedComments);
-	};
-	
-	// =============================================================
-	
-	handleEditComment = async event => {
-		this.interactionSetup(event);
-		// eslint-disable-next-line no-alert
-		const newComment = window.prompt('Enter new comment text:', `${event.detail}`);
-		if (newComment) {
-			const updatedComments = await this.api.updateComment(event.target.comment.id, newComment);
-			this.setState( { comments: updatedComments, loading: false } );
-		} else {
-			this.setState( { loading: false } );
-		}
-	};
+  interactionSetup(event) {
+    event.preventDefault();
+    this.setState({ loading: true });
+  }
 
-	// =============================================================
-	
-	handleRemoveComment = async event => {
-		this.interactionSetup(event);
-		// eslint-disable-next-line no-alert
-		const confirmed = window.confirm(`Really delete "${event.detail}"?`);
-		if (confirmed) {
-			const updatedComments = await this.api.removeComment(event.target.comment.id);
-			this.setState( { comments: updatedComments, loading: false } );
-			// console.log(`Comments after remove:`, updatedComments);
-		} else {
-			this.setState( { loading: false } );
-		}
-	};
+  // =============================================================
 
-	// =============================================================
+  handleSortSubmit = async event => {
+    this.interactionSetup(event);
+    const sortType = event.target.value;
+    // eslint-disable-next-line react/no-access-state-in-setstate
+    let updatedComments = this.state.comments;
+    if (sortType === 'Oldest First') {
+      updatedComments = await this.api.getCommentsSortedByTime(true);
+    } else if (sortType === 'Newest First') {
+      updatedComments = await this.api.getCommentsSortedByTime(false);
+    } else if (sortType === 'Alpha A to Z') {
+      updatedComments = await this.api.getCommentsSortedByAlpha(true);
+    } else if (sortType === 'Alpha Z to A') {
+      updatedComments = await this.api.getCommentsSortedByAlpha(false);
+    }
+    this.setState({ comments: updatedComments, loading: false });
+  };
+
+  // =============================================================
+
+  handleSearchSubmit = async event => {
+    this.interactionSetup(event);
+    const searchText = new FormData(event.target).get('search');
+    const updatedComments = await this.api.filterCommentsByText(searchText);
+    this.setState({ comments: updatedComments, loading: false });
+    // console.log(searchText, this.state.comments);
+  };
+
+  // =============================================================
+
+  handleClearSearch = async event => {
+    this.interactionSetup(event);
+    event.target.form.reset();
+    const updatedComments = await this.api.filterCommentsByText();
+    this.setState({ comments: updatedComments, loading: false });
+  };
+
+  // =============================================================
+
+  handleAddComment = async event => {
+    this.interactionSetup(event);
+    const newCommentText = new FormData(event.target).get('comment');
+    event.target.reset();
+    const updatedComments = await this.api.addComment(newCommentText);
+    this.setState({ comments: updatedComments.comments, loading: false });
+    // console.log(`Comments after add:`, updatedComments);
+  };
+
+  // =============================================================
+
+  handleEditComment = async event => {
+    this.interactionSetup(event);
+    // eslint-disable-next-line no-alert
+    const newComment = window.prompt(
+      'Enter new comment text:',
+      `${event.detail}`,
+    );
+    if (newComment) {
+      const updatedComments = await this.api.updateComment(
+        event.target.comment.id,
+        newComment,
+      );
+      this.setState({ comments: updatedComments.comments, loading: false });
+    } else {
+      this.setState({ loading: false });
+    }
+  };
+
+  // =============================================================
+
+  handleRemoveComment = async event => {
+    this.interactionSetup(event);
+    // eslint-disable-next-line no-alert
+    const confirmed = window.confirm(`Really delete "${event.detail}"?`);
+    if (confirmed) {
+      const updatedComments = await this.api.removeComment(
+        event.target.comment.id,
+      );
+      this.setState({ comments: updatedComments.comments, loading: false });
+      // console.log(`Comments after remove:`, updatedComments);
+    } else {
+      this.setState({ loading: false });
+    }
+  };
+
+  // =============================================================
 }
 
 // =============================================================
@@ -200,4 +223,3 @@ export default MessageBoardApp;
 
 // =============================================================
 // =============================================================
-
