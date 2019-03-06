@@ -16,6 +16,8 @@ function wait(ms) {
 class MessageBoardAPI {
   constructor(comments = []) {
     this.comments = comments;
+    this.url =
+      'https://ssaksfithian-express-codealong.herokuapp.com/api/comments/';
   }
 
   // =============================================================
@@ -25,9 +27,7 @@ class MessageBoardAPI {
    * @returns {Promise<array>}
    */
   getComments() {
-    return fetch(
-      'https://ssaksfithian-express-codealong.herokuapp.com/api/comments',
-    ).then(response => response.json());
+    return fetch(this.url).then(response => response.json());
   }
 
   // =============================================================
@@ -39,16 +39,13 @@ class MessageBoardAPI {
    */
   addComment(text) {
     const body = { text };
-    return fetch(
-      'https://ssaksfithian-express-codealong.herokuapp.com/api/comments',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
+    return fetch(this.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    ).then(response => response.json());
+      body: JSON.stringify(body),
+    }).then(response => response.json());
   }
 
   // =============================================================
@@ -63,16 +60,13 @@ class MessageBoardAPI {
     // this.comments.find(comment => comment.id === id).text = text;
     // return wait(1000).then(() => this.comments);
     const body = { text };
-    return fetch(
-      `https://ssaksfithian-express-codealong.herokuapp.com/api/comments/${id}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
+    return fetch(`${this.url}${id}/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    ).then(response => response.json());
+      body: JSON.stringify(body),
+    }).then(response => response.json());
   }
 
   // =============================================================
@@ -83,15 +77,9 @@ class MessageBoardAPI {
    * @returns {Promise<array>} Updated comments array
    */
   removeComment(id) {
-    return fetch(
-      `https://ssaksfithian-express-codealong.herokuapp.com/api/comments/${id}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    ).then(response => response.json());
+    return fetch(`${this.url}${id}/`, {
+      method: 'DELETE',
+    }).then(response => response.json());
   }
 
   // =============================================================
@@ -138,10 +126,13 @@ class MessageBoardAPI {
    * @returns {Promise<array>} Filtered array of comment objects
    */
   filterCommentsByText(substring = '') {
-    return wait(1000).then(() =>
-      this.comments.filter(comment =>
-        comment.text.toLowerCase().includes(substring.toLowerCase()),
-      ),
+    // return wait(1000).then(() =>
+    //   this.comments.filter(comment =>
+    //     comment.text.toLowerCase().includes(substring.toLowerCase()),
+    //   ),
+    // );
+    return fetch(`${this.url}?filter=${substring}`).then(response =>
+      response.json(),
     );
   }
 }
