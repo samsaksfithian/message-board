@@ -171,9 +171,8 @@ class MessageBoardApp extends HTMLElement {
     this.interactionSetup(event);
     const newCommentText = new FormData(event.target).get('comment');
     event.target.reset();
-    const updatedComments = await this.api.addComment(newCommentText);
-    this.setState({ comments: updatedComments.comments, loading: false });
-    // console.log(`Comments after add:`, updatedComments);
+    const responseBody = await this.api.addComment(newCommentText);
+    this.setState({ comments: responseBody.comments, loading: false });
   };
 
   // =============================================================
@@ -186,11 +185,11 @@ class MessageBoardApp extends HTMLElement {
       `${event.detail}`,
     );
     if (newComment) {
-      const updatedComments = await this.api.updateComment(
+      const responseBody = await this.api.updateComment(
         event.target.comment.id,
         newComment,
       );
-      this.setState({ comments: updatedComments.comments, loading: false });
+      this.setState({ comments: responseBody.comments, loading: false });
     } else {
       this.setState({ loading: false });
     }
@@ -203,11 +202,10 @@ class MessageBoardApp extends HTMLElement {
     // eslint-disable-next-line no-alert
     const confirmed = window.confirm(`Really delete "${event.detail}"?`);
     if (confirmed) {
-      const updatedComments = await this.api.removeComment(
+      const responseBody = await this.api.removeComment(
         event.target.comment.id,
       );
-      this.setState({ comments: updatedComments.comments, loading: false });
-      // console.log(`Comments after remove:`, updatedComments);
+      this.setState({ comments: responseBody.comments, loading: false });
     } else {
       this.setState({ loading: false });
     }
